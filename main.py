@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""PyPad - a small Python-focused text editor built with PyQt6.
-
-Usage:  pypad              open PyPad
-        pypad here.txt     open (or create on save) here.txt
-"""
 from __future__ import annotations
 
 import builtins
@@ -18,7 +13,7 @@ from pathlib import Path
 
 from PyQt6.QtCore import QObject, QRect, QSize, Qt, QUrl, pyqtSignal
 from PyQt6.QtGui import (
-    QAction, QColor, QDesktopServices, QFontDatabase, QKeySequence, QPainter, QSyntaxHighlighter,
+    QAction, QColor, QDesktopServices, QFontDatabase, QIcon, QKeySequence, QPainter, QSyntaxHighlighter,
     QTextCharFormat, QTextCursor, QTextDocument, QTextFormat,
 )
 from PyQt6.QtWidgets import (
@@ -29,11 +24,19 @@ from PyQt6.QtWidgets import (
 
 APP_NAME = "PyPad"
 APP_VERSION = "1.0.0"
-TWITTER_URL = "https://twitter.com/MaMad4Ever"
+TWITTER_URL = "https://twitter.com/MaMad4Ever"  # <- put your profile link here
 FILE_FILTER = "All Files (*);;Python Files (*.py);;Text Files (*.txt)"
 PYTHON_EXTS = (".py", ".pyw")
 
-LICENSE_TEXT = """LICENSE_TEXT = "PyPad is released under the MIT License.\nCopyright (c) 2026 MaMad4Ever"""
+LICENSE_TEXT = """MIT License
+
+Copyright (c) 2026 MaMad4Ever
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."""
 
 
 def _config_dir() -> Path:
@@ -49,6 +52,15 @@ def _config_dir() -> Path:
 SETTINGS_FILE = _config_dir() / "settings.json"  # user-editable, opened from Edit > Settings
 SESSION_FILE = _config_dir() / "session.json"    # open tabs, managed by the app
 DEFAULT_SETTINGS = {"font_size": 12, "tab_width": 4, "dark_mode": False, "recent_files": []}
+
+
+def _load_icon() -> QIcon:
+    """icon.png next to main.py (running from source), else the installed theme icon."""
+    local = Path(__file__).resolve().parent / "icon.png"
+    if local.exists():
+        return QIcon(str(local))
+    installed = Path("/usr/share/icons/hicolor/256x256/apps/pypad.png")
+    return QIcon.fromTheme("pypad", QIcon(str(installed)) if installed.exists() else QIcon())
 
 
 def _write_json(path: Path, data) -> None:
@@ -811,6 +823,7 @@ def main() -> None:
     app = QApplication([sys.argv[0], *qt_args])
     app.setApplicationName(APP_NAME)
     app.setDesktopFileName("pypad")
+    app.setWindowIcon(_load_icon())
 
     ui = PyPadWindow()
     controller = PyPadController(ui)
