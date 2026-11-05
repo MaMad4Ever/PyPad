@@ -10,7 +10,7 @@ Download the latest `.deb` from the [Releases](../../releases) page, then:
 sudo apt install ./pypad.deb
 ```
 
-Using `apt install ./...` also installs the dependency (`python3-pyqt6`) automatically. Plain `dpkg -i` does not.
+Using `apt install ./...` also installs the dependency (`python3-pyqt6`) automatically.
 
 Run it:
 
